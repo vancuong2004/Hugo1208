@@ -3,24 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giới thiệu bản thân</title>
+    <title>Happy New Year</title>
     <style>
         body {
-            background-color: #f0f8ff;
-            color: #333;
-            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('https://source.unsplash.com/1920x1080/?fireworks,newyear') no-repeat center center/cover;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
         }
+
+        .container {
+            text-align: center;
+            color: white;
+        }
+
         h1 {
-            color: #2e8b57;
+            font-size: 4rem;
+            margin: 0;
+            animation: glow 1.5s infinite alternate;
         }
-        p {
-            color: #4682b4;
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #ff0, 0 0 10px #ff0, 0 0 20px #ff0, 0 0 30px #ff6347;
+            }
+            to {
+                text-shadow: 0 0 10px #00f, 0 0 20px #00f, 0 0 30px #00f, 0 0 40px #1e90ff;
+            }
+        }
+
+        .fireworks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        canvas {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Xin chào!</h1>
-    <p>Tôi là <strong>[Tên của bạn]</strong>. Tôi yêu thích công nghệ và sáng tạo.</p>
-    <p>Sở thích: đọc sách, nghe nhạc, và khám phá những điều mới.</p>
+    <div class="container">
+        <h1>Happy New Year!</h1>
+        <p>Wishing you a year full of joy, success, and happiness!</p>
+    </div>
+
+    <div class="fireworks">
+        <canvas id="fireworksCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const fireworks = [];
+
+        class Firework {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 3 + 2;
+                this.alpha = 1;
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 10,
+                    y: (Math.random() - 0.5) * 10
+                };
+            }
+
+            update() {
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.alpha -= 0.02;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        function createFireworks() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            const color = `${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}`;
+            for (let i = 0; i < 50; i++) {
+                fireworks.push(new Firework(x, y, color));
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            fireworks.forEach((firework, index) => {
+                if (firework.alpha <= 0) {
+                    fireworks.splice(index, 1);
+                } else {
+                    firework.update();
+                    firework.draw();
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        setInterval(createFireworks, 500);
+        animate();
+    </script>
 </body>
 </html>
+
